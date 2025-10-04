@@ -1,0 +1,112 @@
+// This is your Prisma schema file for the hackathon project.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum IssueStatus {
+  OPEN
+  CLOSED
+  REWARDED
+}
+
+
+// MODELS
+
+model User {
+  id              String    @id @unique // Clerk User ID
+  email           String?   @unique
+  githubUsername  String?
+  githubAvatarUrl String?
+  walletAddress   String?   @unique
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  memberships   OrgMember[]
+  contributions Contribution[]
+
+  @@map("users") 
+}
+
+model Organization {
+  id        Int      @id @default(autoincrement())
+  name      String
+  githubId  Int      @unique
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members      OrgMember[]
+  repositories Repository[]
+
+  @@map("organizations") 
+}
+
+model OrgMember {
+  role   Role
+  userId String
+  orgId  Int
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  org  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@id([userId, orgId])
+  @@map("org_members") //
+}
+
+model Repository {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  githubRepoId BigInt   @unique
+  url          String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orgId        Int
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  issues       Issue[]
+
+  @@map("repositories") //
+}
+
+model Issue {
+  id            Int         @id @default(autoincrement())
+  title         String
+  githubIssueId BigInt      @unique
+  number        Int
+  status        IssueStatus @default(OPEN)
+  tokenReward   Decimal     @db.Decimal(18, 9) 
+
+  repoId        Int
+  repository    Repository  @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  contribution  Contribution?
+
+  @@index([repoId]) // for faster issue lookups by repo
+  @@map("issues")   //
+}
+
+model Contribution {
+  id                   Int      @id @default(autoincrement())
+  completedAt          DateTime @default(now())
+  transactionSignature String?
+
+  issueId       Int    @unique
+  issue         Issue  @relation(fields: [issueId], references: [id], onDelete: Cascade) // onDelete
+  contributorId String
+  contributor   User   @relation(fields: [contributorId], references: [id], onDelete: Cascade) // onDelete
+
+  @@index([contributorId]) // for faster leaderboard/user queries
+  @@map("contributions")   //
+}

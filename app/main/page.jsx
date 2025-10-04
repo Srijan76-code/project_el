@@ -1,9 +1,11 @@
+"use client"
 import React from 'react'
+import { SidebarMain } from './_components/SidebarMain'
 
 const page = () => {
   return (
     <div>
-      main
+      <SidebarMain />
     </div>
   )
 }

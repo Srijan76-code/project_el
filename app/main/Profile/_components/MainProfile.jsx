@@ -53,7 +53,7 @@ const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
 
         
         <motion.div variants={itemVariants}>
-          <ProfileHeader  username={user.githubUsername} />
+          <ProfileHeader  username={user?.githubUsername} />
         </motion.div>
 
         {/* Stats Section */}

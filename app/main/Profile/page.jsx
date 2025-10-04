@@ -7,13 +7,15 @@ import { getUserProfileData } from '@/actions/userProfile'
 const page =async () => {
   const {user,stats} = await getUserProfileData()
   console.log("inside profile page,getUserProfileData: ", user,stats)
+  let totalEarned=0
+  let contributedRepos=[]
+  let contributionCount=0
   if (stats){
-    const {totalEarned,contributedRepos,contributionCount}=stats
+    totalEarned=stats.totalEarned
+    contributedRepos=stats.contributedRepos
+    contributionCount=stats.contributionCount
 
-  }else{
-    const totalEarned=0
-    const contributedRepos=[]
-    const contributionCount=0
+
   }
   return (
     <div>

@@ -1,0 +1,23 @@
+{
+  "name": "Earn OS",
+  "symbol": "EOS",
+  "description": "Earn OS token for rewarding open-source contributors on Solana Devnet",
+  "image": "https://i.ibb.co/zVywxgdX/logo.png",
+  "attributes": [
+    { "trait_type": "Category", "value": "Reward Token" }
+  ],
+  "properties": {
+    "creators": [
+      {
+        "address": "FQuoYJ2DLLE8BTfV9DKsjtju26ub1mjGec5grVhfQm74",
+        "share": 100
+      }
+    ],
+    "files": [
+      {
+        "uri": "https://i.ibb.co/zVywxgdX/logo.png",
+        "type": "image/png"
+      }
+    ]
+  }
+}

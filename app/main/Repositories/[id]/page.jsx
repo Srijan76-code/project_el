@@ -1,13 +1,18 @@
 import React from 'react'
 
 import RepoIssue from './_components/RepoIsuue'
+import { getBountiedIssuesForRepo } from '@/actions/userProfile'
 
-const page = ({params}) => {
+const page = async({params}) => {
+  const repoId = params.id
+  const {issues}=await getBountiedIssuesForRepo(repoId)
   return (
     <div>
+
+      
       
 
-      <RepoIssue id={params.id}/>
+      <RepoIssue issues={issues}  />
     </div>
   )
 }

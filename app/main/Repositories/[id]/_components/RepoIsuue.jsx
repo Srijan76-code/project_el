@@ -16,59 +16,59 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-const issues = [
-  {
-    id: 101,
-    title: "Fix navbar responsiveness",
-    tags: ["frontend", "good first issue"],
-    createdAt: "2025-10-05T04:00:00Z",
-    repo: {
-      name: "UI-Library",
-      avatar: "https://avatars.githubusercontent.com/u/9919?s=200&v=4",
-    },
-    creator: {
-      name: "Alice Johnson",
-      avatar: "https://i.pravatar.cc/40?img=1",
-    },
-    tokens: 10,
-    assignedTo: null,
-  },
-  {
-    id: 102,
-    title: "Implement authentication flow",
-    tags: ["backend", "urgent"],
-    createdAt: "2025-10-04T20:00:00Z",
-    repo: {
-      name: "Auth-Service",
-      avatar: "https://avatars.githubusercontent.com/u/69631?s=200&v=4",
-    },
-    creator: {
-      name: "Bob Smith",
-      avatar: "https://i.pravatar.cc/40?img=2",
-    },
-    tokens: 20,
-    assignedTo: {
-      name: "Charlie Brown",
-      avatar: "https://i.pravatar.cc/40?img=3",
-    },
-  },
-  {
-    id: 103,
-    title: "Update UI component library",
-    tags: ["frontend", "enhancement"],
-    createdAt: "2025-10-05T01:30:00Z",
-    repo: {
-      name: "Design-System",
-      avatar: "https://avatars.githubusercontent.com/u/6154722?s=200&v=4",
-    },
-    creator: {
-      name: "Diana Prince",
-      avatar: "https://i.pravatar.cc/40?img=4",
-    },
-    tokens: 15,
-    assignedTo: null,
-  },
-];
+// const issues = [
+//   {
+//     id: 101,
+//     title: "Fix navbar responsiveness",
+//     tags: ["frontend", "good first issue"],
+//     createdAt: "2025-10-05T04:00:00Z",
+//     repo: {
+//       name: "UI-Library",
+//       avatar: "https://avatars.githubusercontent.com/u/9919?s=200&v=4",
+//     },
+//     creator: {
+//       name: "Alice Johnson",
+//       avatar: "https://i.pravatar.cc/40?img=1",
+//     },
+//     tokens: 10,
+//     assignedTo: null,
+//   },
+//   {
+//     id: 102,
+//     title: "Implement authentication flow",
+//     tags: ["backend", "urgent"],
+//     createdAt: "2025-10-04T20:00:00Z",
+//     repo: {
+//       name: "Auth-Service",
+//       avatar: "https://avatars.githubusercontent.com/u/69631?s=200&v=4",
+//     },
+//     creator: {
+//       name: "Bob Smith",
+//       avatar: "https://i.pravatar.cc/40?img=2",
+//     },
+//     tokens: 20,
+//     assignedTo: {
+//       name: "Charlie Brown",
+//       avatar: "https://i.pravatar.cc/40?img=3",
+//     },
+//   },
+//   {
+//     id: 103,
+//     title: "Update UI component library",
+//     tags: ["frontend", "enhancement"],
+//     createdAt: "2025-10-05T01:30:00Z",
+//     repo: {
+//       name: "Design-System",
+//       avatar: "https://avatars.githubusercontent.com/u/6154722?s=200&v=4",
+//     },
+//     creator: {
+//       name: "Diana Prince",
+//       avatar: "https://i.pravatar.cc/40?img=4",
+//     },
+//     tokens: 15,
+//     assignedTo: null,
+//   },
+// ];
 
 const tagColors = {
   frontend: "bg-blue-500",
@@ -78,7 +78,7 @@ const tagColors = {
   enhancement: "bg-purple-500",
 };
 
-const RepoIssue = ({ id }) => {
+const RepoIssue = ({issues}) => {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);

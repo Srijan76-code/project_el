@@ -21,11 +21,10 @@ export async function upsertUser(data) {
       },
       create: {
         id: data.id,
-        email: data.email,
         githubUsername: data.username,
-        githubAvatarUrl: data.avatarUrl,
+        githubUsername: data.avatarUrl,
       },
-    });
+    })
     return { user };
   } catch (error) {
     console.error("Failed to upsert user:", error);
@@ -111,16 +110,46 @@ export async function getUserProfileData() {
 // Fetches all repos for the Explore page.
 export async function getExplorePageRepos() {
   try {
-    const repos = await prisma.repository.findMany({
+    // 1. This database query remains the same
+    const reposFromDb = await prisma.repository.findMany({
       orderBy: { createdAt: "desc" },
       include: {
-        organization: { select: { name: true, avatarUrl: true } },
-        _count: {
-          select: { issues: { where: { status: "OPEN" } } },
+        organization: {
+          select: {
+            name: true,
+            avatarUrl: true,
+          },
+        },
+        issues: {
+          where: {
+            status: "OPEN",
+          },
+          select: {
+            tokenReward: true,
+          },
         },
       },
     });
-    return { repos };
+
+    // 2. We only change how the data is formatted
+    const repositories = reposFromDb.map((repo) => {
+      const totalTokens = repo.issues.reduce(
+        (sum, issue) => sum + Number(issue.tokenReward),
+        0
+      );
+
+      return {
+        id: repo.id,
+        name: repo.name,
+        description: repo.description,
+        // -- THIS IS THE ONLY LINE THAT CHANGED --
+        image: repo.organization.avatarUrl || null,
+        tokens: totalTokens,
+      };
+    });
+
+    return { repositories };
+
   } catch (error) {
     console.error("Failed to get repos:", error);
     return { error: "Could not fetch repositories." };
@@ -161,91 +190,179 @@ export async function getLeaderboard() {
     return { error: "Could not fetch leaderboard." };
   }
 }
+// Fetches all open, bountied issues for a single repository.
+export async function getBountiedIssuesForRepo(repoId) {
+  // Validate that repoId is a number
+  if (isNaN(repoId)) {
+    return { error: "Invalid repository ID." };
+  }
 
+  try {
+    const issuesFromDb = await prisma.issue.findMany({
+      where: {
+        repoId: repoId,   // Filter by the specific repository ID
+        status: 'OPEN',   // Only get issues with open bounties
+      },
+      include: {
+        repository: {
+          include: {
+            organization: {
+              select: {
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        githubCreatedAt: 'desc', // Show the newest issues first
+      },
+    });
+
+    // Transform the data to the same consistent format as getOpenIssues
+    const issues = issuesFromDb.map((issue) => ({
+      id: issue.id,
+      title: issue.title,
+      tags: issue.tags,
+      createdAt: issue.githubCreatedAt.toISOString(),
+      repo: {
+        name: issue.repository.name,
+        avatar: issue.repository.organization.avatarUrl,
+      },
+      creator: {
+        name: issue.creatorName,
+        avatar: issue.creatorAvatarUrl,
+      },
+      tokens: Number(issue.tokenReward),
+      assignedTo: issue.assigneeName
+        ? {
+            name: issue.assigneeName,
+            avatar: issue.assigneeAvatarUrl,
+          }
+        : null,
+    }));
+
+    return { issues };
+
+  } catch (error) {
+    console.error("Failed to get issues for repo:", error);
+    return { error: "Could not fetch repository issues." };
+  }
+}
 // --- ORGANIZATION & REPO ACTIONS ---
 
 // Creates an org and sets the current user as admin.
-export async function createOrganization(data) {
-  const { userId } = auth();
-  if (!userId) return { error: "Not authenticated" };
+// export async function createOrganization(data) {
+//   const { userId } = auth();
+//   if (!userId) return { error: "Not authenticated" };
 
-  try {
-    const newOrg = await prisma.$transaction(async (tx) => {
-      const org = await tx.organization.create({
-        data: {
-          name: data.name,
-          githubId: data.githubId,
-          avatarUrl: data.avatarUrl,
-        },
-      });
-      await tx.orgMember.create({
-        data: { orgId: org.id, userId: userId, role: "ADMIN" },
-      });
-      return org;
-    });
-    revalidatePath("/dashboard");
-    return { organization: newOrg };
-  } catch (error) {
-    console.error("Failed to create organization:", error);
-    return { error: "Could not create organization." };
-  }
-}
+//   try {
+//     const newOrg = await prisma.$transaction(async (tx) => {
+//       const org = await tx.organization.create({
+//         data: {
+//           name: data.name,
+//           githubId: data.githubId,
+//           avatarUrl: data.avatarUrl,
+//         },
+//       });
+//       await tx.orgMember.create({
+//         data: { orgId: org.id, userId: userId, role: "ADMIN" },
+//       });
+//       return org;
+//     });
+//     revalidatePath("/dashboard");
+//     return { organization: newOrg };
+//   } catch (error) {
+//     console.error("Failed to create organization:", error);
+//     return { error: "Could not create organization." };
+//   }
+// }
 
-// Registers a new repository for an organization.
-export async function registerRepo(data, repoOwner, userGithubToken) { 
-    const { userId } = auth();
-    if (!userId) return { error: "Not authenticated" };
+// // Registers a new repository for an organization.
+// export async function registerRepo(data, repoOwner, userGithubToken) { 
+//     const { userId } = auth();
+//     if (!userId) return { error: "Not authenticated" };
   
-    try {
-      // First, save the repo to your database
-      const repo = await prisma.repository.create({ data });
+//     try {
+//       // First, save the repo to your database
+//       const repo = await prisma.repository.create({ data });
   
-      // Immediately after, create the webhook on GitHub
-      const webhookResult = await createGithubWebhook(
-        repoOwner,
-        repo.name,
-        userGithubToken
-      );
+//       // Immediately after, create the webhook on GitHub
+//       const webhookResult = await createGithubWebhook(
+//         repoOwner,
+//         repo.name,
+//         userGithubToken
+//       );
   
-      if (webhookResult.error) {
-        console.error("Webhook setup failed:", webhookResult.error);
-      }
+//       if (webhookResult.error) {
+//         console.error("Webhook setup failed:", webhookResult.error);
+//       }
       
-      revalidatePath("/explore");
-      revalidatePath(`/organization/${data.orgId}`);
-      return { repo };
-    } catch (error) {
-      console.error("Failed to register repo:", error);
-      return { error: "Could not register repository." };
-    }
-  }
+//       revalidatePath("/explore");
+//       revalidatePath(`/organization/${data.orgId}`);
+//       return { repo };
+//     } catch (error) {
+//       console.error("Failed to register repo:", error);
+//       return { error: "Could not register repository." };
+//     }
+//   }
 
   
-// Sets or updates the token bounty for an issue.
-export async function setIssueBounty(data) {
-  const { userId } = auth();
-  if (!userId) return { error: "Not authenticated" };
 
+
+
+
+// Fetches all open issues for a general "bounty board" page.
+export async function getOpenIssues() {
   try {
-    const issue = await prisma.issue.upsert({
-      where: { githubIssueId: data.githubIssueId },
-      update: { tokenReward: data.tokenReward },
-      create: {
-        repoId: data.repoId,
-        githubIssueId: data.githubIssueId,
-        number: data.number,
-        title: data.title,
-        tokenReward: data.tokenReward,
+    // 1. Fetch all issues with a status of 'OPEN'
+    const issuesFromDb = await prisma.issue.findMany({
+      where: {
+        status: 'OPEN',
+      },
+      include: {
+        repository: {
+          include: {
+            organization: {
+              select: {
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
-    revalidatePath(`/repo/${data.repoId}`);
-    return { issue };
+
+    // 2. Transform the data to match the desired structure
+    const issues = issuesFromDb.map((issue) => ({
+      id: issue.id,
+      title: issue.title,
+      tags: issue.tags,
+      createdAt: issue.createdAt.toISOString(),
+      repo: {
+        name: issue.repository.name,
+        avatar: issue.repository.organization.avatarUrl,
+      },
+      creator: {
+        name: issue.creatorName,
+        avatar: issue.creatorAvatarUrl,
+      },
+      tokens: Number(issue.tokenReward),
+      assignedTo: issue.assigneeName // If assigneeName is null, this will be null
+        ? {
+            name: issue.assigneeName,
+            avatar: issue.assigneeAvatarUrl,
+          }
+        : null,
+    }));
+
+    return { issues };
+    
   } catch (error) {
-    console.error("Failed to set issue bounty:", error);
-    return { error: "Could not set bounty on issue." };
+    console.error("Failed to get open issues:", error);
+    return { error: "Could not fetch open issues." };
   }
 }
-
-
-
-

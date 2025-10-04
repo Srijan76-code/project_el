@@ -7,6 +7,7 @@ import HistoryTable from './HistoryTable';
 import ContributionGraph from './ContributionGraph';
 import { DollarSign, TrendingUp, GitBranch, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import WalletConnect from '@/app/solana/WalletConnect';
 
 const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
   const containerVariants = {
@@ -45,6 +46,12 @@ const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
         animate="visible"
       >
         {/* Header */}
+        <motion.div variants={itemVariants}>
+          <WalletConnect/>
+        </motion.div>
+
+
+        
         <motion.div variants={itemVariants}>
           <ProfileHeader  username={user.githubUsername} />
         </motion.div>

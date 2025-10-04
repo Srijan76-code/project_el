@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Search, Star, Coins } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,39 +15,40 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import Link from "next/link";
+import { getExplorePageRepos } from "@/actions/userProfile";
 
-const repositories = [
-  {
-    id: 1,
-    name: "react-dashboard",
-    description:
-      "A modern dashboard built with React and TypeScript featuring real-time analytics and data visualization.",
-    image: "https://api.dicebear.com/7.x/shapes/svg?seed=react-dashboard",
-    languages: ["TypeScript", "React", "CSS"],
-    stars: 1234,
-    tokens: 100,
-  },
-  {
-    id: 2,
-    name: "ai-chatbot",
-    description:
-      "Open source chatbot powered by machine learning with natural language processing capabilities.",
-    image: "https://api.dicebear.com/7.x/shapes/svg?seed=ai-chatbot",
-    languages: ["Python", "JavaScript", "HTML"],
-    stars: 2845,
-    tokens: 150,
-  },
-  {
-    id: 3,
-    name: "ui-component-library",
-    description:
-      "Beautiful and accessible component library for building modern web applications.",
-    image: "https://api.dicebear.com/7.x/shapes/svg?seed=ui-components",
-    languages: ["JavaScript", "CSS", "HTML"],
-    stars: 987,
-    tokens: 200,
-  },
-];
+// const repositories = [
+//   {
+//     id: 1,
+//     name: "react-dashboard",
+//     description:
+//       "A modern dashboard built with React and TypeScript featuring real-time analytics and data visualization.",
+//     image: "https://api.dicebear.com/7.x/shapes/svg?seed=react-dashboard",
+//     languages: ["TypeScript", "React", "CSS"],
+//     stars: 1234,
+//     tokens: 100,
+//   },
+//   {
+//     id: 2,
+//     name: "ai-chatbot",
+//     description:
+//       "Open source chatbot powered by machine learning with natural language processing capabilities.",
+//     image: "https://api.dicebear.com/7.x/shapes/svg?seed=ai-chatbot",
+//     languages: ["Python", "JavaScript", "HTML"],
+//     stars: 2845,
+//     tokens: 150,
+//   },
+//   {
+//     id: 3,
+//     name: "ui-component-library",
+//     description:
+//       "Beautiful and accessible component library for building modern web applications.",
+//     image: "https://api.dicebear.com/7.x/shapes/svg?seed=ui-components",
+//     languages: ["JavaScript", "CSS", "HTML"],
+//     stars: 987,
+//     tokens: 200,
+//   },
+// ];
 
 const languageColors = {
   TypeScript: "bg-blue-500",
@@ -62,6 +63,8 @@ const languageColors = {
 };
 
 const MainRepository = () => {
+  const [repositories, setRepositories] = useState([]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState([]);
 
@@ -78,6 +81,15 @@ const MainRepository = () => {
 
     return matchesSearch && matchesLanguage;
   });
+
+  useEffect(() => {
+    async function fetchData() {
+      const { repositories } = await getExplorePageRepos()
+      console.log("fetched repos: ", repositories)
+      setRepositories(repositories)
+    }
+    fetchData()
+  })
 
   return (
     <div className="space-y-10 w-full h-[calc(100vh-200px)] overflow-y-auto pr-2">

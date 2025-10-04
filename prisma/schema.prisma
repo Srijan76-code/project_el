@@ -25,7 +25,7 @@ enum IssueStatus {
 // MODELS
 
 model User {
-  id              String    @id @unique // Clerk User ID
+  id              String    @id  // Clerk User ID
   email           String?   @unique
   githubUsername  String?
   githubAvatarUrl String?

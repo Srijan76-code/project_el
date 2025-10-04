@@ -2,7 +2,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { createGithubWebhook } from "./createGithubWebhook";
 
@@ -365,4 +365,31 @@ export async function getOpenIssues() {
     console.error("Failed to get open issues:", error);
     return { error: "Could not fetch open issues." };
   }
+}
+
+
+
+export async function initializeUser() {
+  const { userId } = await auth()
+  if (!userId) return null
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: userId },
+  })
+
+  if (!dbUser) {
+    const clerkUser = await currentUser()
+    if (clerkUser) {
+      const newUser = await prisma.user.create({
+        data: {
+          id: clerkUser.id,
+          githubUsername: clerkUser.username,
+          githubAvatarUrl: clerkUser.imageUrl,
+        }
+      })
+      return newUser
+    }
+  }
+
+  return dbUser
 }

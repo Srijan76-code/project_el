@@ -1,11 +1,14 @@
-    // --- REAL SOLANA LOGIC GOES HERE ---
+import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache"
+
+async function sendSplTokenReward(recipientAddress, amount, issueNumber) {
+      // --- REAL SOLANA LOGIC GOES HERE ---
     // 1. Initialize connection to Solana cluster.
     // 2. Load your app's wallet from a secure environment variable.
     // 3. Construct and send the SPL token transfer transaction.
     // 4. Wait for confirmation.
     // 5. Return the transaction signature.
     // For now, we'll return a dummy signature.
-async function sendSplTokenReward(recipientAddress, amount, issueNumber) {
     console.log(`Sending ${amount} tokens for issue #${issueNumber} to ${recipientAddress}`);
 
     const dummySignature = `dummy_tx_${Date.now()}`;

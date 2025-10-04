@@ -35,7 +35,7 @@ export async function upsertUser(data) {
 
 // Updates the wallet address for the current user.
 export async function updateUserWallet(walletAddress) {
-  const { userId } = auth();
+  const { userId } =await auth();
   if (!userId) return { error: "Not authenticated" };
 
   try {
@@ -53,7 +53,7 @@ export async function updateUserWallet(walletAddress) {
 
 // Gets all profile data for the current user.
 export async function getUserProfileData() {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return { error: "Not authenticated" };
 
   try {
@@ -140,7 +140,7 @@ export async function getLeaderboard() {
 
 // Creates an org and sets the current user as admin.
 export async function createOrganization(data) {
-  const { userId } = auth();
+  const { userId } =await auth();
   if (!userId) return { error: "Not authenticated" };
 
   try {
@@ -167,7 +167,7 @@ export async function createOrganization(data) {
 
 // Registers a new repository for an organization.
 export async function registerRepo(data, repoOwner, userGithubToken) { 
-    const { userId } = auth();
+    const { userId } =await auth();
     if (!userId) return { error: "Not authenticated" };
   
     try {
@@ -197,7 +197,7 @@ export async function registerRepo(data, repoOwner, userGithubToken) {
   
 // Sets or updates the token bounty for an issue.
 export async function setIssueBounty(data) {
-  const { userId } = auth();
+  const { userId } =await auth();
   if (!userId) return { error: "Not authenticated" };
 
   try {

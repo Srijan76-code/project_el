@@ -10,6 +10,7 @@ function getClosingIssueId(body) {
 }
 
 export default async function handler(req, res) {
+  
   // IMPORTANT: You must verify the webhook signature in a real app!
   // This ensures the request is actually from GitHub.
   // For the hackathon, we might skip this, but it's critical for production.
@@ -49,3 +50,11 @@ export default async function handler(req, res) {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 }
+
+
+
+
+
+
+
+

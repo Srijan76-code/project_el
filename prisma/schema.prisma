@@ -19,6 +19,7 @@ enum IssueStatus {
   OPEN
   CLOSED
   REWARDED
+  FUNDED
 }
 
 
@@ -82,15 +83,23 @@ model Repository {
 }
 
 model Issue {
-  id            Int         @id @default(autoincrement())
-  title         String
-  githubIssueId BigInt      @unique
-  number        Int
-  status        IssueStatus @default(OPEN)
-  tokenReward   Decimal     @db.Decimal(18, 9) 
+  id                   String      @id @default(cuid()) // Changed to String to support custom IDs
+  title                String
+  githubIssueId        BigInt?     @unique // Made optional
+  number               Int?        // Made optional
+  githubUrl            String?     // Added for GitHub issue URL
+  status               IssueStatus @default(OPEN)
+  rewardAmount         Decimal     @db.Decimal(18, 9) // Standardized on rewardAmount
+  tokenType            String?     // Added (SOL, EOS, SPL)
+  tokenMintAddress     String?     // Added for SPL tokens
+  organizationWallet   String?     // Added for organization wallet
+  treasuryWallet       String?     // Added for treasury wallet
+  transactionSignature String?     // Added for blockchain transaction
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
 
-  repoId        Int
-  repository    Repository  @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  repoId        Int?          // Made optional
+  repository    Repository?   @relation(fields: [repoId], references: [id], onDelete: Cascade)
   contribution  Contribution?
 
   @@index([repoId]) // for faster issue lookups by repo
@@ -102,7 +111,7 @@ model Contribution {
   completedAt          DateTime @default(now())
   transactionSignature String?
 
-  issueId       Int    @unique
+  issueId       String @unique // Changed to String to match Issue.id
   issue         Issue  @relation(fields: [issueId], references: [id], onDelete: Cascade) // onDelete
   contributorId String
   contributor   User   @relation(fields: [contributorId], references: [id], onDelete: Cascade) // onDelete

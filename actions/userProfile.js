@@ -229,13 +229,13 @@ export async function setIssueBounty(data) {
   try {
     const issue = await prisma.issue.upsert({
       where: { githubIssueId: data.githubIssueId },
-      update: { tokenReward: data.tokenReward },
+      update: { rewardAmount: data.rewardAmount },
       create: {
         repoId: data.repoId,
         githubIssueId: data.githubIssueId,
         number: data.number,
         title: data.title,
-        tokenReward: data.tokenReward,
+        rewardAmount: data.rewardAmount,
       },
     });
     revalidatePath(`/repo/${data.repoId}`);

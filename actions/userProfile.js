@@ -52,6 +52,8 @@ export async function updateUserWallet(walletAddress) {
 }
 
 // Gets all profile data for the current user.
+
+
 export async function getUserProfileData() {
   const { userId } = auth();
   if (!userId) return { error: "Not authenticated" };
@@ -60,18 +62,36 @@ export async function getUserProfileData() {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) return { error: "User not found." };
 
+    // 1. Fetch all contributions with related issue and repository data
     const contributions = await prisma.contribution.findMany({
       where: { contributorId: userId },
-      include: { issue: { select: { rewardAmount: true } } },
-    });
-    const totalEarned = contributions.reduce((sum, c) => sum + Number(c.issue.rewardAmount), 0);
-
-    const contributedRepos = await prisma.repository.findMany({
-      where: {
-        issues: { some: { contribution: { contributorId: userId } } },
+      include: {
+        issue: {
+          include: {
+            repository: {
+              select: {
+                name: true, // Select the repository name
+              },
+            },
+          },
+        },
       },
-      distinct: ["id"],
+      orderBy: {
+        completedAt: 'desc', // Show the most recent contributions first
+      },
     });
+
+    // 2. Transform the data to match the 'allHistory' structure
+    const contributedRepos = contributions.map(contribution => ({
+      repo: contribution.issue.repository.name,
+      issue: contribution.issue.title,
+      reward: `${Number(contribution.issue.tokenReward)}x`,
+      date: new Date(contribution.completedAt).toLocaleDateString('en-GB'), // Formats date as DD/MM/YYYY
+      status: 'Success', // Assuming all logged contributions were successful
+    }));
+
+    // 3. Calculate total earned tokens from the same data
+    const totalEarned = contributions.reduce((sum, c) => sum + Number(c.issue.tokenReward), 0);
 
     return {
       user,
@@ -86,7 +106,6 @@ export async function getUserProfileData() {
     return { error: "Could not fetch user profile." };
   }
 }
-
 // --- EXPLORE & LEADERBOARD ACTIONS ---
 
 // Fetches all repos for the Explore page.
@@ -111,25 +130,32 @@ export async function getExplorePageRepos() {
 // Fetches the top 20 ranked users.
 export async function getLeaderboard() {
   try {
-    const leaderboardData = await prisma.$queryRaw`
+    // This single query gets all the data you need.
+    const rawData = await prisma.$queryRaw`
       SELECT
-        u.id,
-        u."githubUsername",
-        u."githubAvatarUrl",
-        SUM(i."rewardAmount") AS "totalEarned"
+        u."githubUsername" AS "name",
+        u."githubAvatarUrl" AS "photo",
+        SUM(i."tokenReward") AS "points",
+        COUNT(c.id) AS "issuesSolved"
       FROM "users" u
       JOIN "contributions" c ON u.id = c."contributorId"
       JOIN "issues" i ON c."issueId" = i.id
       GROUP BY u.id
-      ORDER BY "totalEarned" DESC
-      LIMIT 20;
+      ORDER BY "points" DESC
+      LIMIT 10;
     `;
-    return { // Convert BigInt to string for serialization
-      leaderboard: leaderboardData.map((user) => ({
-        ...user,
-        totalEarned: user.totalEarned.toString(),
-      })),
-    };
+
+    // Format the data to match your structure and handle number conversions.
+    const leaderboard = rawData.map(user => ({
+      name: user.name,
+      issues: Number(user.issuesSolved), // Convert from BigInt
+      issuesSolved: Number(user.issuesSolved), // Convert from BigInt
+      points: Number(user.points), // Convert from Decimal/BigInt
+      photo: user.photo,
+    }));
+
+    return { leaderboard };
+
   } catch (error) {
     console.error("Failed to fetch leaderboard:", error);
     return { error: "Could not fetch leaderboard." };

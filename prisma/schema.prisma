@@ -119,3 +119,4 @@ model Contribution {
   @@index([contributorId]) // for faster leaderboard/user queries
   @@map("contributions")   //
 }
+

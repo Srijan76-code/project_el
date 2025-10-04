@@ -8,7 +8,7 @@ import ContributionGraph from './ContributionGraph';
 import { DollarSign, TrendingUp, GitBranch, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const MainProfile = () => {
+const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -46,7 +46,7 @@ const MainProfile = () => {
       >
         {/* Header */}
         <motion.div variants={itemVariants}>
-          <ProfileHeader />
+          <ProfileHeader  username={user.githubUsername} />
         </motion.div>
 
         {/* Stats Section */}
@@ -56,6 +56,7 @@ const MainProfile = () => {
         >
           <motion.div variants={itemVariants}>
             <StatsCard 
+              
               title="Current Balance" 
               value="$687.00" 
               trend="up"
@@ -65,7 +66,8 @@ const MainProfile = () => {
           </motion.div>
           <motion.div variants={itemVariants}>
             <StatsCard 
-              title="Lifetime Earnings" 
+            totalEarned={totalEarned}
+              title="Earned Tokens" 
               value="$1,058.00" 
               trend="up"
               trendValue="+8.2%"
@@ -74,6 +76,7 @@ const MainProfile = () => {
           </motion.div>
           <motion.div variants={itemVariants}>
             <StatsCard 
+            contributionCount={contributionCount}
               title="Repo Contributions" 
               value="25" 
               trend="up"
@@ -94,12 +97,13 @@ const MainProfile = () => {
 
         {/* Contribution Graph */}
         <motion.div variants={itemVariants}>
+          
           <ContributionGraph />
         </motion.div>
 
         {/* History Table */}
         <motion.div variants={itemVariants}>
-          <HistoryTable />
+          <HistoryTable contributedRepos={contributedRepos} />
         </motion.div>
       </motion.div>
     </div>

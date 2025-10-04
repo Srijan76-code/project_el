@@ -62,9 +62,9 @@ export async function getUserProfileData() {
 
     const contributions = await prisma.contribution.findMany({
       where: { contributorId: userId },
-      include: { issue: { select: { tokenReward: true } } },
+      include: { issue: { select: { rewardAmount: true } } },
     });
-    const totalEarned = contributions.reduce((sum, c) => sum + Number(c.issue.tokenReward), 0);
+    const totalEarned = contributions.reduce((sum, c) => sum + Number(c.issue.rewardAmount), 0);
 
     const contributedRepos = await prisma.repository.findMany({
       where: {
@@ -116,7 +116,7 @@ export async function getLeaderboard() {
         u.id,
         u."githubUsername",
         u."githubAvatarUrl",
-        SUM(i."tokenReward") AS "totalEarned"
+        SUM(i."rewardAmount") AS "totalEarned"
       FROM "users" u
       JOIN "contributions" c ON u.id = c."contributorId"
       JOIN "issues" i ON c."issueId" = i.id
@@ -203,13 +203,13 @@ export async function setIssueBounty(data) {
   try {
     const issue = await prisma.issue.upsert({
       where: { githubIssueId: data.githubIssueId },
-      update: { tokenReward: data.tokenReward },
+      update: { rewardAmount: data.rewardAmount },
       create: {
         repoId: data.repoId,
         githubIssueId: data.githubIssueId,
         number: data.number,
         title: data.title,
-        tokenReward: data.tokenReward,
+        rewardAmount: data.rewardAmount,
       },
     });
     revalidatePath(`/repo/${data.repoId}`);

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import { useRouter } from "next/navigation";
 
 function ElegantShape({
     className,
@@ -65,6 +65,7 @@ function HeroGeometric({
     title1 = " Get Rewarded for Real Impact",
     title2 = "."
 }) {
+    const router = useRouter();
     const fadeUpVariants = {
         hidden: { opacity: 0, y: 30 },
         visible: (i) => ({
@@ -147,6 +148,9 @@ function HeroGeometric({
                             </span>
                             <br />
                             <button
+                                onClick={() => {
+                                    router.push('/main/Profile');
+                                }}
                                 className="inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl tracking-wide"
                             >
                                 <span className="tracking-wider">Get Started</span>

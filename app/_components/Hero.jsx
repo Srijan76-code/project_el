@@ -3,7 +3,7 @@ import React from 'react'
 
 const Hero = () => {
   return (
-    <div>
+    <div id="hero">
       <HeroGeometric />
     </div>
   )

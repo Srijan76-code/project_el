@@ -14,7 +14,7 @@ const FeatureCard = ({ title, text, icon }) => (
 
 const About = () => {
   return (
-    <section className="bg-black text-white py-28 px-8">
+    <section id="about" className="bg-black text-white py-28 px-8">
       <div className="text-center mb-24">
         <h3 className="text-sm text-blue-400 font-semibold mb-4 tracking-[0.3em] uppercase">
           WHY EOS

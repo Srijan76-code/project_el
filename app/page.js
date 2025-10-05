@@ -3,6 +3,9 @@ import React from 'react';
 import { Footer } from './_components/Footer';
 import { Timeline } from './_components/Timeline';
 import Contact from './_components/connect';
+import Navbar from './_components/Navbar';
+import Hero from './_components/Hero';
+import About from './_components/About';
 
 const timelineData = [
   {
@@ -54,6 +57,9 @@ const timelineData = [
 const Page = () => {
   return (
     <div className="min-h-screen bg-black text-white">
+      <Navbar/>
+      <Hero/>
+      <About/>
       <Timeline data={timelineData} />
       <Contact />
       <Footer />

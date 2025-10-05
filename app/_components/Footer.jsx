@@ -7,40 +7,38 @@ const footerLinks = [
   {
     label: 'Quick Links',
     links: [
-      { title: 'Home', href: '#features' },
-      { title: 'About', href: '#pricing' },
-      { title: 'Steps', href: '#testimonials' },
-      { title: 'Contact', href: '/' },
+      { title: 'Home', href: '#hero' },
+      { title: 'About', href: '#about' },
+      { title: 'Steps', href: '#timeline' },
+      { title: 'Contact', href: '#contact' },
     ],
   },
-//   {
-//     label: 'Company',
-//     links: [
-//       { title: 'FAQs', href: '/faqs' },
-//       { title: 'About Us', href: '/about' },
-//       { title: 'Privacy Policy', href: '/privacy' },
-//       { title: 'Terms of Services', href: '/terms' },
-//     ],
-//   },
   {
     label: 'Contact US',
     links: [
       { title: 'earnos@gmail.com', href: 'mailto:earnos@gmail.com' },
-
     ],
   },
   {
     label: 'Social Links',
     links: [
-    //   { title: 'Facebook', href: '#', icon: FacebookIcon },
       { title: 'Instagram', href: '#', icon: InstagramIcon },
-    //   { title: 'Youtube', href: '#', icon: YoutubeIcon },
-    //   { title: 'LinkedIn', href: '#', icon: LinkedinIcon },
     ],
   },
 ];
 
 export function Footer() {
+  const handleScroll = (e, id) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
+
   return (
     <footer className="md:rounded-t-6xl relative w-full max-w-8xl mx-auto flex flex-col items-center justify-center rounded-t-4xl border-t bg-[radial-gradient(40%_160px_at_50%_0%,theme(colors.blue.500/25),theme(colors.gray.900)_60%,transparent)] px-6 py-12 lg:py-16">
       <div className="bg-foreground/20 absolute top-0 right-1/2 left-1/2 h-px w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full blur" />
@@ -65,6 +63,7 @@ export function Footer() {
                     <li key={link.title}>
                       <a
                         href={link.href}
+                        onClick={(e) => link.href.startsWith('#') && handleScroll(e, link.href.slice(1))}
                         className="hover:text-foreground inline-flex items-center transition-all duration-300"
                       >
                         {link.icon && <link.icon className="me-1 size-4" />}

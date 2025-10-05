@@ -3,6 +3,7 @@ import { Badge } from './badge';
 import { motion } from 'framer-motion';
 
 const ProfileHeader = ({username}) => {
+  
     const containerVariants = {
       hidden: { opacity: 0 },
       visible: {
@@ -55,7 +56,7 @@ const ProfileHeader = ({username}) => {
               style={{ color: 'rgb(250, 250, 250)' }}
               variants={itemVariants}
             >
-              {username}
+              {username} 
             </motion.h3>
             
             {/* Programming Language Badges */}

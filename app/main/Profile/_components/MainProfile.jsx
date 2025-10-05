@@ -10,6 +10,8 @@ import { motion } from 'framer-motion';
 import WalletConnect from '@/app/solana/WalletConnect';
 
 const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
+  console.log("inside main profile component: ", user)
+  console.log("totalEarned,contributedRepos,contributionCount: ", totalEarned,contributedRepos,contributionCount) 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

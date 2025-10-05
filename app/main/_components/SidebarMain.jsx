@@ -28,9 +28,9 @@ import { useState, useEffect } from "react";
 import { usePathname } from 'next/navigation';
 
 const items = [
-  { title: "My Profile", url: "/main/profile", icon: User },
+  { title: "My Profile", url: "/main/Profile", icon: User },
   { title: "Repositories", url: "/main/Repositories", icon: GitBranch },
-  { title: "Leaderboard", url: "/main/leaderboard", icon: Trophy },
+  { title: "Leaderboard", url: "/main/Leaderboard", icon: Trophy },
 ];
 
 export function SidebarMain() {

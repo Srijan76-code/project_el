@@ -14,29 +14,31 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { registerRepo } from '@/actions/orgProfile';
 
-export default function AddRepo() {
+export default function AddRepo({repositories}) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRepo, setSelectedRepo] = useState(null);
 
-  const repositories = [
-    { name: 'Learning-Stories-Repository', time: '2d ago' },
-    { name: 'Manage-schema---Prisma---Oct 1', time: 'Oct 1' },
-    { name: 'CRUD-API-for-Shipping-Man', time: 'Sep 29' },
-    { name: 'kestra', time: 'Sep 27' },
-    { name: 'storybook', time: 'Sep 20' },
-  ];
+  // const repositories = [
+  //   { name: 'Learning-Stories-Repository', time: '2d ago' },
+  //   { name: 'Manage-schema---Prisma---Oct 1', time: 'Oct 1' },
+  //   { name: 'CRUD-API-for-Shipping-Man', time: 'Sep 29' },
+  //   { name: 'kestra', time: 'Sep 27' },
+  //   { name: 'storybook', time: 'Sep 20' },
+  // ];
 
   const filteredRepos = repositories.filter(repo =>
     repo.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleImport = () => {
-    if (selectedRepo) {
+  const handleImport = async() => {
+
+ const {repo}=await registerRepo(selectedRepo)
       router.push('/org/AddRepos');
     }
-  };
+  
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden bg-black">
@@ -115,7 +117,7 @@ export default function AddRepo() {
                   <div className="flex items-center justify-between bg-neutral-800/80 hover:bg-neutral-700/80 transition-all p-4 rounded-xl border border-neutral-700">
                     <div>
                       <p className="text-sm font-medium text-white tracking-tight">{repo.name}</p>
-                      <p className="text-xs text-gray-500">{repo.time}</p>
+                      {/* <p className="text-xs text-gray-500">{repo.time}</p> */}
                     </div>
 
                     {/* Import Button */}

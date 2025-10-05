@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Search, Coins } from "lucide-react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Search, Coins, ArrowLeft } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,6 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import { getOpenIssues } from "@/actions/userProfile";
 
 const issues = [
   {
@@ -78,59 +78,37 @@ const tagColors = {
   enhancement: "bg-purple-500",
 };
 
-const MainIssues = () => {
-  // const [issues, setIssues] = useState([]);
+const RepoIssue = () => {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Safely get all unique tags from issues
-  const allTags = Array.isArray(issues)
-    ? [...new Set(issues.flatMap((issue) => issue?.tags || []))]
-    : [];
+  const allTags = [...new Set(issues.flatMap((issue) => issue.tags))];
 
-  // Safe filtering with null checks
-  const filteredIssues = Array.isArray(issues)
-    ? issues.filter((issue) => {
-      if (!issue) return false;
-      const matchesSearch = issue.title?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesTag = selectedTags.length === 0 ||
-        issue.tags?.some((tag) => selectedTags.includes(tag));
-      return matchesSearch && matchesTag;
-    })
-    : [];
+  const filteredIssues = issues.filter((issue) => {
+    const matchesSearch = issue.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesTag =
+      selectedTags.length === 0 ||
+      issue.tags.some((tag) => selectedTags.includes(tag));
+    return matchesSearch && matchesTag;
+  });
 
   const hoursAgo = (dateStr) => {
     const diff = new Date().getTime() - new Date(dateStr).getTime();
     return Math.floor(diff / 1000 / 60 / 60);
   };
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setIsLoading(true);
-        const { issues } = await getOpenIssues();
-        setIssues(Array.isArray(issues) ? issues : []);
-      } catch (error) {
-        console.error('Error fetching issues:', error);
-        setIssues([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-400">Loading issues...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-10 w-full h-[calc(100vh-200px)] overflow-y-auto pr-2">
+    <div className="space-y-10 w-full p-8">
+      <Button
+        onClick={() => router.back()}
+        className="flex items-center gap-2 bg-transparent hover:bg-gray-800 text-white mb-4"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        <span>Back</span>
+      </Button>
       {/* Header */}
       <div className="space-y-3 text-center">
         <h2 className="text-4xl font-extrabold text-white drop-shadow-sm">
@@ -190,10 +168,11 @@ const MainIssues = () => {
                   key={tag}
                   size="sm"
                   variant={selectedTags.includes(tag) ? "default" : "outline"}
-                  className={`rounded-full px-5 py-1.5 text-sm transition-all duration-200 border ${selectedTags.includes(tag)
+                  className={`rounded-full px-5 py-1.5 text-sm transition-all duration-200 border ${
+                    selectedTags.includes(tag)
                       ? "border-blue-500 bg-blue-500/20 text-white"
                       : "border-gray-700 bg-gray-900 text-gray-300"
-                    } hover:scale-105 hover:border-blue-400`}
+                  } hover:scale-105 hover:border-blue-400`}
                   onClick={() => {
                     setSelectedTags((prev) =>
                       prev.includes(tag)
@@ -264,8 +243,9 @@ const MainIssues = () => {
                         className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-gray-900 text-gray-300 border border-gray-800 group-hover:border-blue-500/40 group-hover:text-white transition"
                       >
                         <span
-                          className={`h-2.5 w-2.5 rounded-full ${tagColors[tag] || "bg-blue-500"
-                            }`}
+                          className={`h-2.5 w-2.5 rounded-full ${
+                            tagColors[tag] || "bg-blue-500"
+                          }`}
                         ></span>
                         {tag}
                       </span>
@@ -289,7 +269,7 @@ const MainIssues = () => {
                   <div className="flex items-center gap-1.5">
                     <Coins className="h-5 w-5 text-yellow-400" />
                     <span className="text-white text-base">
-                      {issue.tokens} tokens
+                      {issue.tokens}
                     </span>
                   </div>
                   {issue.assignedTo ? (
@@ -320,4 +300,4 @@ const MainIssues = () => {
   );
 };
 
-export default MainIssues;
+export default RepoIssue;

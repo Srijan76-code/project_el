@@ -16,29 +16,87 @@ import {
 import { Button } from '@/components/ui/button';
 import { registerRepo } from '@/actions/orgProfile';
 
-export default function AddRepo({repositories}) {
+const repositories = [
+  {
+    id: 1,
+    name: "project-el",
+    description: "A decentralized open source contribution platform",
+    stars: 128,
+    forks: 45,
+    language: "JavaScript",
+    updatedAt: "2024-03-15T10:30:00Z"
+  },
+  {
+    id: 2,
+    name: "smart-contracts",
+    description: "EOS smart contracts for project management",
+    stars: 89,
+    forks: 23,
+    language: "C++",
+    updatedAt: "2024-03-14T15:20:00Z"
+  },
+  {
+    id: 3,
+    name: "blockchain-api",
+    description: "API for interacting with EOS blockchain",
+    stars: 156,
+    forks: 34,
+    language: "TypeScript",
+    updatedAt: "2024-03-13T09:45:00Z"
+  },
+  {
+    id: 4,
+    name: "token-manager",
+    description: "EOS token management system",
+    stars: 67,
+    forks: 12,
+    language: "Python",
+    updatedAt: "2024-03-12T14:15:00Z"
+  },
+  {
+    id: 5,
+    name: "defi-dashboard",
+    description: "Dashboard for DeFi analytics",
+    stars: 234,
+    forks: 56,
+    language: "TypeScript",
+    updatedAt: "2024-03-11T11:20:00Z"
+  }
+];
+
+export default function AddRepo() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRepo, setSelectedRepo] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // const repositories = [
-  //   { name: 'Learning-Stories-Repository', time: '2d ago' },
-  //   { name: 'Manage-schema---Prisma---Oct 1', time: 'Oct 1' },
-  //   { name: 'CRUD-API-for-Shipping-Man', time: 'Sep 29' },
-  //   { name: 'kestra', time: 'Sep 27' },
-  //   { name: 'storybook', time: 'Sep 20' },
-  // ];
+  const handleAddRepository = async (repo) => {
+    router.push('/org/AddRepos');
+    // setLoading(true);
+    // try {
+    //   const response = await addRepositoryToOrg({
+    //     ...repo,
+    //     orgId: 1 // Replace with actual org ID from context/params
+    //   });
 
-  const filteredRepos = repositories.filter(repo =>
+    //   if (response.error) {
+    //     throw new Error(response.error);
+    //   }
+
+    //   router.push('/org'); // Redirect back to org page
+    //   router.refresh();
+    // } catch (error) {
+    //   console.error('Failed to add repository:', error);
+    //   // Show error toast/message
+    // } finally {
+    //   setLoading(false);
+    // }
+  };
+
+  // Filter repositories based on search
+  const filteredRepos = repositories?.filter(repo =>
     repo.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleImport = async() => {
-
- const {repo}=await registerRepo(selectedRepo)
-      router.push('/org/AddRepos');
-    }
-  
+  ) || [];
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden bg-black">
@@ -154,7 +212,7 @@ export default function AddRepo({repositories}) {
                       </DialogClose>
 
                       <Button
-                        onClick={handleImport}
+                        onClick={() => handleAddRepository(repo)}
                         className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-5 shadow-lg transition"
                       >
                         Import

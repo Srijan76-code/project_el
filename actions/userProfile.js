@@ -1,4 +1,3 @@
-
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -192,61 +191,40 @@ export async function getLeaderboard() {
 }
 // Fetches all open, bountied issues for a single repository.
 export async function getBountiedIssuesForRepo(repoId) {
-  // Validate that repoId is a number
-  if (isNaN(repoId)) {
-    return { error: "Invalid repository ID." };
-  }
+  if (!repoId) return [];
 
   try {
+    const repoIdInt = parseInt(repoId, 10);
+
+    if (isNaN(repoIdInt)) {
+      throw new Error('Invalid repository ID');
+    }
+
     const issuesFromDb = await prisma.issue.findMany({
       where: {
-        repoId: repoId,   // Filter by the specific repository ID
-        status: 'OPEN',   // Only get issues with open bounties
+        repoId: repoIdInt,
+        status: 'OPEN'
       },
       include: {
         repository: {
           include: {
             organization: {
               select: {
-                avatarUrl: true,
-              },
-            },
-          },
-        },
+                avatarUrl: true
+              }
+            }
+          }
+        }
       },
       orderBy: {
-        githubCreatedAt: 'desc', // Show the newest issues first
-      },
+        createdAt: 'desc' // Changed from githubCreatedAt to createdAt
+      }
     });
 
-    // Transform the data to the same consistent format as getOpenIssues
-    const issues = issuesFromDb.map((issue) => ({
-      id: issue.id,
-      title: issue.title,
-      tags: issue.tags,
-      createdAt: issue.githubCreatedAt.toISOString(),
-      repo: {
-        name: issue.repository.name,
-        avatar: issue.repository.organization.avatarUrl,
-      },
-      creator: {
-        name: issue.creatorName,
-        avatar: issue.creatorAvatarUrl,
-      },
-      tokens: Number(issue.tokenReward),
-      assignedTo: issue.assigneeName
-        ? {
-            name: issue.assigneeName,
-            avatar: issue.assigneeAvatarUrl,
-          }
-        : null,
-    }));
-
-    return { issues };
-
+    return { issues: issuesFromDb };
   } catch (error) {
-    console.error("Failed to get issues for repo:", error);
-    return { error: "Could not fetch repository issues." };
+    console.error('Error fetching issues:', error);
+    return { issues: [] };
   }
 }
 // --- ORGANIZATION & REPO ACTIONS ---

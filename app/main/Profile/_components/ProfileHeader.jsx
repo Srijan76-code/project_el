@@ -2,19 +2,19 @@ import React from 'react';
 import { Badge } from './badge';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 
-const ProfileHeader = ({username}) => {
-  
-    const containerVariants = {
-      hidden: { opacity: 0 },
-      visible: {
-        opacity: 1,
-        transition: {
-          staggerChildren: 0.1,
-          delayChildren: 0.2
-        }
-      }
-    };
+const ProfileHeader = ({ username, WalletComponent }) => {
+  // Get initials from username
+  const getInitials = (name) => {
+    if (!name) return '??';
+    return name
+      .split(/[-_\s]/)
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
     const itemVariants = {
       hidden: { 
@@ -34,6 +34,7 @@ const ProfileHeader = ({username}) => {
     };
 
     return (
+      <>
       <motion.div 
         className="flex flex-col sm:flex-row justify-between items-center p-6 rounded-xl border" 
         style={{ backgroundColor: 'rgb(23, 23, 23)', borderColor: 'rgb(38, 38, 38)' }}
@@ -121,18 +122,22 @@ const ProfileHeader = ({username}) => {
 
           </div>
         </div>
-  
-        <motion.div 
-          className="flex gap-4 mt-4 sm:mt-0"
-          variants={itemVariants}
+      
+      <div className="flex items-center gap-4 mt-4 sm:mt-0">
+        <WalletComponent />
+        <Link
+          href="/org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="transition-colors border px-3 py-2 border-white rounded-lg hover:opacity-80"
+          style={{ color: 'rgb(250, 250, 250)' }}
         >
-          <button className="transition-colors hover:opacity-80" style={{ 
-            color: 'rgb(250, 250, 250)'
-          }}>GitHub</button>
-        </motion.div>
-      </motion.div>
-    );
-  };
-  
-  export default ProfileHeader;
-  
+        Your Organisation
+        </Link>
+      </div>
+    </motion.div>
+    </>
+  );
+};
+
+export default ProfileHeader;

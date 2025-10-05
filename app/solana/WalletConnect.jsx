@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useMemo, useEffect, useState } from "react";
@@ -12,10 +11,10 @@ import {
 	WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-wallets";
-import { clusterApiUrl } from "@solana/web3.js";
+import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
 import "@solana/wallet-adapter-react-ui/styles.css"; // default styles for the wallet adapter UI
 
-const WalletConnect = () => {
+const WalletConnect = ({ onBalanceChange }) => {
 	// Use devnet for this example
 	const network = "devnet";
 	const endpoint = useMemo(() => clusterApiUrl(network), [network]);
@@ -30,6 +29,60 @@ const WalletConnect = () => {
 		setWallets([new PhantomWalletAdapter()]);
 	}, []);
 
+	const InnerWalletUI = () => {
+		const { publicKey, connected } = useWallet();
+		const [balance, setBalance] = useState(0);
+		const connection = useMemo(() => new Connection(clusterApiUrl("devnet")), []);
+
+		const fetchBalance = async () => {
+			if (!publicKey) return;
+			try {
+				const tokenMintAddress = new PublicKey(process.env.NEXT_PUBLIC_EOS_TOKEN_MINT);
+				const tokenAccounts = await connection.getParsedTokenAccountsByOwner(
+					publicKey,
+					{ mint: tokenMintAddress }
+				);
+
+				if (tokenAccounts.value.length > 0) {
+					const balance = tokenAccounts.value[0].account.data.parsed.info.tokenAmount.uiAmount;
+					setBalance(balance);
+					onBalanceChange?.(balance);
+				}
+			} catch (error) {
+				console.error("Error fetching EOS balance:", error);
+			}
+		};
+
+		useEffect(() => {
+			if (connected) {
+				fetchBalance();
+				const intervalId = setInterval(fetchBalance, 30000);
+				return () => clearInterval(intervalId);
+			}
+		}, [connected, publicKey]);
+
+		return (
+			<div style={{ display: "flex", alignItems: "center" }}>
+				<WalletMultiButton
+					style={{
+						padding: '12px 24px',
+						borderRadius: '8px',
+						backgroundColor: 'rgb(38, 38, 38)',
+						border: '1px solid rgb(23, 23, 23)',
+						color: 'rgb(250, 250, 250)',
+						fontSize: '14px',
+						fontWeight: 500,
+						transition: 'all 0.2s ease',
+						cursor: 'pointer',
+						'&:hover': {
+							backgroundColor: 'rgb(45, 45, 45)'
+						}
+					}}
+				/>
+			</div>
+		);
+	};
+
 	return (
 		<ConnectionProvider endpoint={endpoint}>
 			<WalletProvider wallets={wallets} autoConnect={false}>
@@ -42,94 +95,4 @@ const WalletConnect = () => {
 	);
 };
 
-	const InnerWalletUI = () => {
-		const { publicKey, connected } = useWallet();
-		const [balance, setBalance] = useState(null);
-		const [usdValue, setUsdValue] = useState(null);
-		const [metadata, setMetadata] = useState(null);
-		const [loading, setLoading] = useState(false);
-		const [error, setError] = useState(null);
-
-		useEffect(() => {
-			let mounted = true;
-			const load = async () => {
-				if (!connected || !publicKey) {
-					setBalance(null);
-					setMetadata(null);
-					setError(null);
-					return;
-				}
-
-				setLoading(true);
-				setError(null);
-				try {
-					// dynamic import of helpers
-					const { getTokenBalance, fetchTokenMetadata } = await import("../../EOS/eostoken");
-					const [balObj, meta] = await Promise.all([
-						getTokenBalance(publicKey),
-						fetchTokenMetadata(),
-					]);
-					if (!mounted) return;
-
-					// Normalize possible shapes of getTokenBalance result.
-					// Expected: { balance: number, usdValue: number }
-					const balNumber = balObj && typeof balObj === "object" ? Number(balObj.balance ?? balObj.amount ?? 0) : Number(balObj ?? 0);
-					const usd = balObj && typeof balObj === "object" ? Number(balObj.usdValue ?? balObj.usd ?? 0) : 0;
-
-					setBalance(Number.isFinite(balNumber) ? balNumber : 0);
-					setUsdValue(Number.isFinite(usd) ? usd : 0);
-					setMetadata(meta);
-				} catch (err) {
-					console.error("Error loading token data:", err);
-					if (mounted) setError(String(err));
-				} finally {
-					if (mounted) setLoading(false);
-				}
-			};
-
-			load();
-			return () => {
-				mounted = false;
-			};
-		}, [connected, publicKey]);
-
-		return (
-			<div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-				<WalletMultiButton />
-
-				<div style={{ minWidth: 260, padding: 12, borderRadius: 8, border: "1px solid #e6e6e6" }}>
-					{!connected && <div style={{ color: "#666" }}>Connect a wallet to see token balance</div>}
-
-					{connected && (
-						<div>
-							<div style={{ marginBottom: 8, fontSize: 13, color: "#333" }}>
-								Wallet: {publicKey ? publicKey.toBase58().slice(0, 6) + "..." + publicKey.toBase58().slice(-4) : "-"}
-							</div>
-
-							{loading && <div style={{ color: "#666" }}>Loading token data...</div>}
-
-							{error && <div style={{ color: "#b00020" }}>Error: {error}</div>}
-
-							{!loading && metadata && (
-								<div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-									{metadata.image && (
-										// image may be a URL
-										<img src={metadata.image} alt={metadata.symbol || metadata.name} style={{ width: 48, height: 48, borderRadius: 8 }} />
-									)}
-									<div>
-										<div style={{ fontWeight: 600 }}>{metadata.symbol || metadata.name}</div>
-										<div style={{ color: "#333" }}>
-											{balance !== null ? `${balance} ${metadata.symbol || "TOK"}` : "0"}
-											{usdValue !== null && usdValue !== undefined ? ` · $${usdValue.toFixed(2)}` : null}
-										</div>
-									</div>
-								</div>
-							)}
-						</div>
-					)}
-				</div>
-			</div>
-		);
-	};
-
-	export default WalletConnect;
+export default WalletConnect;

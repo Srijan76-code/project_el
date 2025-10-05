@@ -112,11 +112,11 @@ const AllUserRepos = () => {
       {/* Header */}
       <div className="space-y-3 text-center mt-10">
         <h2 className="text-4xl font-extrabold text-white drop-shadow-sm">
-          All Your Repositories
+          All Your Registered Repositories
         </h2>
-        <p className="text-gray-400 max-w-xl mx-auto">
+        {/* <p className="text-gray-400 max-w-xl mx-auto">
           Explore all repositories available currently!
-        </p>
+        </p> */}
       </div>
 
       {/* Search + Filter */}
@@ -236,7 +236,7 @@ const AllUserRepos = () => {
       {/* Repository List */}
       <div className="space-y-6 w-[1200px] mx-auto">
         {filteredRepos.map((repo) => (
-          <Link className="space-y-6" href={`/main/Repositories/${repo.id}`} key={repo.id}>
+          <Link className="space-y-6" href={`/org/AddRepos/${repo.id}`} key={repo.id}>
             <Card
               key={repo.id}
               className="group max-w-7xl mb-6 bg-neutral-950 border border-gray-800 

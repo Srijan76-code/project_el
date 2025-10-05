@@ -25,7 +25,7 @@ enum IssueStatus {
 // MODELS
 
 model User {
-  id              String    @id @unique // Clerk User ID
+  id              String    @id  // Clerk User ID
   email           String?   @unique
   githubUsername  String?
   githubAvatarUrl String?
@@ -87,16 +87,22 @@ model Issue {
   githubIssueId BigInt      @unique
   number        Int
   status        IssueStatus @default(OPEN)
-  tokenReward   Decimal     @db.Decimal(18, 9) 
+  tokenReward   Decimal     @db.Decimal(18, 9)
+  
+  // -- ADD THESE NEW FIELDS --
+  tags              String[] @default([])
+  creatorName       String?
+  creatorAvatarUrl  String?
+  assigneeName      String?
+  assigneeAvatarUrl String?
 
   repoId        Int
   repository    Repository  @relation(fields: [repoId], references: [id], onDelete: Cascade)
   contribution  Contribution?
 
-  @@index([repoId]) // for faster issue lookups by repo
-  @@map("issues")   //
+  @@index([repoId])
+  @@map("issues")
 }
-
 model Contribution {
   id                   Int      @id @default(autoincrement())
   completedAt          DateTime @default(now())
@@ -110,3 +116,4 @@ model Contribution {
   @@index([contributorId]) // for faster leaderboard/user queries
   @@map("contributions")   //
 }
+

@@ -3,7 +3,8 @@ import { Badge } from './badge';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-const ProfileHeader = () => {
+const ProfileHeader = ({username}) => {
+  
     const containerVariants = {
       hidden: { opacity: 0 },
       visible: {
@@ -60,7 +61,7 @@ const ProfileHeader = () => {
               style={{ color: 'rgb(250, 250, 250)' }}
               variants={itemVariants}
             >
-              Krish Garg
+              {username} 
             </motion.h3>
             
             {/* Programming Language Badges */}
@@ -117,6 +118,7 @@ const ProfileHeader = () => {
                 </Badge>
               </motion.div>
             </motion.div>
+
           </div>
         </div>
   

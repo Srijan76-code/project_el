@@ -11,7 +11,7 @@ import {
 } from "./pagination";
 import { motion } from 'framer-motion';
 
-const HistoryTable = () => {
+const HistoryTable = ({contributedRepos}) => {
     const containerVariants = {
       hidden: { opacity: 0 },
       visible: {
@@ -103,7 +103,7 @@ const HistoryTable = () => {
               </tr>
             </thead>
             <tbody>
-              {history.map((item, i) => (
+              {contributedRepos.map((item, i) => (
                 <motion.tr 
                   key={i} 
                   style={{ borderBottomColor: 'rgb(23, 23, 23)' }} 

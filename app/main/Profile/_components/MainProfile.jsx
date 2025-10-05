@@ -7,8 +7,13 @@ import HistoryTable from './HistoryTable';
 import ContributionGraph from './ContributionGraph';
 import { DollarSign, TrendingUp, GitBranch, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import WalletConnect from '@/app/solana/WalletConnect';
+import { Button } from '@/components/ui/button';
+import { createOrganization } from '@/actions/orgProfile';
 
-const MainProfile = () => {
+const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
+  console.log("inside main profile component: ", user)
+  console.log("totalEarned,contributedRepos,contributionCount: ", totalEarned,contributedRepos,contributionCount) 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -36,6 +41,16 @@ const MainProfile = () => {
       }
     }
   };
+  async function handleAddOrg(){
+    console.log("handleAddOrg")
+
+    const {organization} = await createOrganization({
+      name: "Test Org",
+      githubId: "test",
+      avatarUrl: "test",
+    });
+    console.log("organization: ", organization)
+  }
 
   return (
     <div className="min-h-screen p-8" style={{ backgroundColor: '#0A0A0A' }}>
@@ -46,7 +61,16 @@ const MainProfile = () => {
       >
         {/* Header */}
         <motion.div variants={itemVariants}>
-          <ProfileHeader />
+        <Button onClick={handleAddOrg}>Add button</Button>
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <WalletConnect/>
+        </motion.div>
+
+
+        
+        <motion.div variants={itemVariants}>
+          <ProfileHeader  username={user?.githubUsername} />
         </motion.div>
 
         {/* Stats Section */}
@@ -56,6 +80,7 @@ const MainProfile = () => {
         >
           <motion.div variants={itemVariants}>
             <StatsCard 
+              
               title="Current Balance" 
               value="$687.00" 
               trend="up"
@@ -65,7 +90,8 @@ const MainProfile = () => {
           </motion.div>
           <motion.div variants={itemVariants}>
             <StatsCard 
-              title="Lifetime Earnings" 
+            totalEarned={totalEarned}
+              title="Earned Tokens" 
               value="$1,058.00" 
               trend="up"
               trendValue="+8.2%"
@@ -74,6 +100,7 @@ const MainProfile = () => {
           </motion.div>
           <motion.div variants={itemVariants}>
             <StatsCard 
+            contributionCount={contributionCount}
               title="Repo Contributions" 
               value="25" 
               trend="up"
@@ -94,12 +121,13 @@ const MainProfile = () => {
 
         {/* Contribution Graph */}
         <motion.div variants={itemVariants}>
+          
           <ContributionGraph />
         </motion.div>
 
         {/* History Table */}
         <motion.div variants={itemVariants}>
-          <HistoryTable />
+          <HistoryTable contributedRepos={contributedRepos} />
         </motion.div>
       </motion.div>
     </div>

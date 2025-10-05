@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import ProfileHeader from './ProfileHeader';
 import StatsCard from './StatsCard';
 import HistoryTable from './HistoryTable';
@@ -11,9 +11,17 @@ import WalletConnect from '@/app/solana/WalletConnect';
 import { Button } from '@/components/ui/button';
 import { createOrganization } from '@/actions/orgProfile';
 
-const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
+const EOS_TOKEN_MINT = process.env.NEXT_PUBLIC_EOS_TOKEN_MINT;
+
+const MainProfile = ({ user, totalEarned, contributedRepos, contributionCount }) => {
+  const [walletBalance, setWalletBalance] = useState(0);
+
+  const handleBalanceChange = (newBalance) => {
+    setWalletBalance(newBalance);
+  };
+
   console.log("inside main profile component: ", user)
-  console.log("totalEarned,contributedRepos,contributionCount: ", totalEarned,contributedRepos,contributionCount) 
+  console.log("totalEarned,contributedRepos,contributionCount: ", totalEarned, contributedRepos, contributionCount)
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -26,13 +34,13 @@ const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
   };
 
   const itemVariants = {
-    hidden: { 
-      opacity: 0, 
+    hidden: {
+      opacity: 0,
       y: -30,
       scale: 0.95
     },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       scale: 1,
       transition: {
@@ -61,57 +69,51 @@ const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
       >
         {/* Header */}
         <motion.div variants={itemVariants}>
-        <Button onClick={handleAddOrg}>Add button</Button>
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <WalletConnect/>
+          <WalletConnect onBalanceChange={handleBalanceChange} />
         </motion.div>
 
-
-        
         <motion.div variants={itemVariants}>
-          <ProfileHeader  username={user?.githubUsername} />
+          <ProfileHeader username={user?.githubUsername} />
         </motion.div>
 
         {/* Stats Section */}
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-8"
           variants={containerVariants}
         >
           <motion.div variants={itemVariants}>
-            <StatsCard 
-              
-              title="Current Balance" 
-              value="$687.00" 
+            <StatsCard
+              title="Current Balance"
+              value={`${walletBalance} EOS`}
               trend="up"
               trendValue="+12.5%"
               icon={<DollarSign size={20} />}
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <StatsCard 
-            totalEarned={totalEarned}
-              title="Earned Tokens" 
-              value="$1,058.00" 
+            <StatsCard
+              totalEarned={totalEarned}
+              title="Earned Tokens"
+              value={`${totalEarned || 1058} EOS`}
               trend="up"
               trendValue="+8.2%"
               icon={<TrendingUp size={20} />}
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <StatsCard 
-            contributionCount={contributionCount}
-              title="Repo Contributions" 
-              value="25" 
+            <StatsCard
+              contributionCount={contributionCount}
+              title="Repo Contributions"
+              value={contributionCount?.toString() || "25"}
               trend="up"
               trendValue="+5"
               icon={<GitBranch size={20} />}
             />
           </motion.div>
           <motion.div variants={itemVariants}>
-            <StatsCard 
-              title="Issues Solved" 
-              value="4.5%" 
+            <StatsCard
+              title="Issues Solved"
+              value="4.5%"
               trend="up"
               trendValue="+0.8%"
               icon={<Zap size={20} />}
@@ -121,7 +123,6 @@ const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
 
         {/* Contribution Graph */}
         <motion.div variants={itemVariants}>
-          
           <ContributionGraph />
         </motion.div>
 

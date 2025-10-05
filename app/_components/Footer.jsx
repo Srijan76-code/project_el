@@ -47,8 +47,8 @@ export function Footer() {
 
       <div className="grid w-full gap-8 xl:grid-cols-3 xl:gap-8">
         <AnimatedContainer className="space-y-4 ml-17 mt-6">
-          <FrameIcon className="size-8" />
-          <p className="text-blue-200 mt-8 text-sm md:mt-0">
+        <span className="text-3xl font-bold tracking-tight text-white ml-4">Earn<span className="text-blue-500">OS</span></span>
+          <p className="text-blue-200 mt-8 text-sm md:mt-5">
             © {new Date().getFullYear()} EOS. All rights reserved.
           </p>
           <h3 className="text-blue-50 mt-8 text-sm md:mt-0">Contribute, Commit, Earn. <br/>The Open Source Economy, Driven by You.</h3>

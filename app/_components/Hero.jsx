@@ -1,9 +1,10 @@
+import { HeroGeometric } from '@/components/ui/shape-landing-hero'
 import React from 'react'
 
 const Hero = () => {
   return (
     <div>
-      hero
+      <HeroGeometric />
     </div>
   )
 }

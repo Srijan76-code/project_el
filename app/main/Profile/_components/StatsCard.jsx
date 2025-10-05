@@ -34,8 +34,8 @@ const StatsCard = ({ title, value, trend, trendValue, icon }) => {
       <motion.div 
         className="p-6 rounded-xl border relative overflow-hidden" 
         style={{ 
-          backgroundColor: 'rgb(38, 38, 38)', 
-          borderColor: 'rgb(23, 23, 23)',
+          backgroundColor: 'rgb(23, 23, 23)', 
+          borderColor: 'rgb(38, 38, 38)',
           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)'
         }}
         variants={containerVariants}

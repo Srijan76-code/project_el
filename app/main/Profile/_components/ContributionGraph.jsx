@@ -92,7 +92,7 @@ const ContributionGraph = () => {
   return (
     <motion.div 
       className="p-6 rounded-xl border" 
-      style={{ backgroundColor: 'rgb(38, 38, 38)', borderColor: 'rgb(23, 23, 23)' }}
+      style={{ backgroundColor: '#171717', borderColor: 'rgb(38, 38, 38)' }}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -109,7 +109,7 @@ const ContributionGraph = () => {
       </motion.div>
       
       <motion.div className="w-full" variants={itemVariants}>
-        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ backgroundColor: 'rgb(23, 23, 23)', borderRadius: '8px' }}>
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ backgroundColor: '#171717', borderRadius: '8px' }}>
           {/* Grid lines */}
           {Array.from({ length: data.length }, (_, i) => (
             <line
@@ -118,7 +118,7 @@ const ContributionGraph = () => {
               y1={padding}
               x2={padding + (i * (width - 2 * padding) / (data.length - 1))}
               y2={height - padding}
-              stroke="rgb(38, 38, 38)"
+              stroke="rgb(64, 64, 64)"
               strokeWidth="1"
               strokeDasharray="2,2"
             />
@@ -130,15 +130,15 @@ const ContributionGraph = () => {
               y1={height - padding - (i * (height - 2 * padding) / maxContributions)}
               x2={width - padding}
               y2={height - padding - (i * (height - 2 * padding) / maxContributions)}
-              stroke="rgb(38, 38, 38)"
+              stroke="rgb(64, 64, 64)"
               strokeWidth="1"
               strokeDasharray="2,2"
             />
           ))}
           
           {/* Axes */}
-          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="rgb(250, 250, 250)" strokeWidth="2" />
-          <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="rgb(250, 250, 250)" strokeWidth="2" />
+          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="rgb(64, 64, 64)" strokeWidth="2" />
+          <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="rgb(64, 64, 64)" strokeWidth="2" />
 
           {/* Labels */}
           {[5, 10, 15, 20, 25, 30].map(day => {

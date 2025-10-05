@@ -53,7 +53,7 @@ const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
   }
 
   return (
-    <div className="min-h-screen p-8" style={{ backgroundColor: 'rgb(23, 23, 23)' }}>
+    <div className="min-h-screen p-8" style={{ backgroundColor: '#0A0A0A' }}>
       <motion.div
         variants={containerVariants}
         initial="hidden"

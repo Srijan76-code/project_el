@@ -8,6 +8,8 @@ import ContributionGraph from './ContributionGraph';
 import { DollarSign, TrendingUp, GitBranch, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import WalletConnect from '@/app/solana/WalletConnect';
+import { Button } from '@/components/ui/button';
+import { createOrganization } from '@/actions/orgProfile';
 
 const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
   console.log("inside main profile component: ", user)
@@ -39,6 +41,16 @@ const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
       }
     }
   };
+  async function handleAddOrg(){
+    console.log("handleAddOrg")
+
+    const {organization} = await createOrganization({
+      name: "Test Org",
+      githubId: "test",
+      avatarUrl: "test",
+    });
+    console.log("organization: ", organization)
+  }
 
   return (
     <div className="min-h-screen p-8" style={{ backgroundColor: 'rgb(23, 23, 23)' }}>
@@ -48,6 +60,9 @@ const MainProfile = ({user,totalEarned,contributedRepos,contributionCount}) => {
         animate="visible"
       >
         {/* Header */}
+        <motion.div variants={itemVariants}>
+        <Button onClick={handleAddOrg}>Add button</Button>
+        </motion.div>
         <motion.div variants={itemVariants}>
           <WalletConnect/>
         </motion.div>

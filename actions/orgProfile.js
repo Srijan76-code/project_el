@@ -143,3 +143,52 @@ export async function setIssueBounty(data) {
   }
 }
 
+// Action to get all registered repositories for an organization
+export async function getRegisteredRepos(orgId) {
+  const { userId } = auth();
+  if (!userId) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    // First, verify the user has access to this organization
+    const org = await prisma.organization.findFirst({
+      where: {
+        id: orgId,
+        OR: [
+          { ownerId: userId },
+          { members: { some: { userId } } }
+        ]
+      }
+    });
+
+    if (!org) {
+      return { error: "Organization not found or access denied" };
+    }
+
+    // Get all repositories for this organization
+    const repos = await prisma.repository.findMany({
+      where: {
+        organizationId: orgId
+      },
+      include: {
+        issues: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            bountyAmount: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return { repos };
+  } catch (error) {
+    console.error("Failed to fetch organization repositories:", error);
+    return { error: "Could not fetch organization repositories" };
+  }
+}

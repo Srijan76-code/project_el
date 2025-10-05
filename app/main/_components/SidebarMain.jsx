@@ -92,7 +92,7 @@ export function SidebarMain() {
         </SidebarContent>
 
         {/* Sidebar Footer */}
-        <SidebarFooter className="px-4 pb-4">
+        {/* <SidebarFooter className="px-4 pb-4">
           <SidebarMenu>
             <SidebarMenuItem>
               <AlertDialog>
@@ -127,7 +127,7 @@ export function SidebarMain() {
               </AlertDialog>
             </SidebarMenuItem>
           </SidebarMenu>
-        </SidebarFooter>
+        </SidebarFooter> */}
       </Sidebar>
   );
 }

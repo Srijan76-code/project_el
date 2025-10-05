@@ -109,7 +109,7 @@ const ProfileCard = ({ profile }) => {
               {profile?.name}
             </h2>
             <p className="text-blue-400 text-lg mt-2">{profile?.issuesSolved} issues solved</p>
-            {/* 
+            
             <div className="mt-10 text-gray-400 font-medium">Languages</div>
             <div className="interests">
               {profile?.languages?.map((language, i) => (
@@ -117,7 +117,7 @@ const ProfileCard = ({ profile }) => {
                   {language}
                 </div>
               ))}
-            </div> */}
+            </div>
           </div>
 
           <div className="likes">

@@ -56,7 +56,7 @@ export function SidebarMain() {
       <Sidebar className="bg-[#121212] text-gray-300 w-64 flex flex-col justify-between h-screen">
         <SidebarHeader>
           <div className="flex flex-col items-start justify-center p-4">
-            <Image src="/logo.png" alt="Logo" width={40} height={40} />
+          <span className="text-3xl font-bold tracking-tight text-white ml-4">Earn<span className="text-blue-500">OS</span></span>
             <span className="mt-2 text-lg font-bold text-white"></span>
           </div>
         </SidebarHeader>

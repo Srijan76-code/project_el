@@ -3,88 +3,88 @@ import React from "react";
 import AnimatedList from "./animatedList";
 import ProfileCard from "./profileCard";
 
-// const leaderboardData = [
-//   {
-//     name: "Sarah Chen",
-//     issues: 42,
-//     issuesSolved: 42,
-//     points: 450,
-//     photo: "/M1.png",
-//     languages: ["JavaScript", "TypeScript", "Node.js"]
-//   },
-//   {
-//     name: "Michael Rodriguez",
-//     issues: 35,
-//     issuesSolved: 35,
-//     points: 380,
-//     photo: "/M2.png",
-//     languages: ["Python", "Django", "React"]
-//   },
-//   {
-//     name: "Priya Patel",
-//     issues: 28,
-//     issuesSolved: 28,
-//     points: 320,
-//     photo: "/M3.png",
-//     languages: ["Java", "Spring", "Kotlin"]
-//   },
-//   {
-//     name: "James Kim",
-//     issues: 25,
-//     issuesSolved: 25,
-//     points: 290,
-//     languages: ["Go", "Rust", "Kubernetes"]
-//   },
-//   {
-//     name: "Aisha Johnson",
-//     issues: 24,
-//     issuesSolved: 24,
-//     points: 275,
-//     languages: ["C#", ".NET", "SQL"]
-//   },
-//   {
-//     name: "David Wilson",
-//     issues: 23,
-//     issuesSolved: 23,
-//     points: 260,
-//     languages: ["PHP", "Laravel", "Vue.js"]
-//   },
-//   {
-//     name: "Emma Davis",
-//     issues: 22,
-//     issuesSolved: 22,
-//     points: 240,
-//     languages: ["Ruby", "Rails", "React"]
-//   },
-//   {
-//     name: "Carlos Mendez",
-//     issues: 20,
-//     issuesSolved: 20,
-//     points: 220,
-//     languages: ["Python", "Flask", "Docker"]
-//   },
-//   {
-//     name: "Olivia Thompson",
-//     issues: 19,
-//     issuesSolved: 19,
-//     points: 210,
-//     languages: ["Swift", "iOS", "Firebase"]
-//   },
-//   {
-//     name: "Tyrone Williams",
-//     issues: 18,
-//     issuesSolved: 18,
-//     points: 200,
-//     languages: ["Dart", "Flutter", "Firebase"]
-//   }
-// ];
+const leaderboardData = [
+  {
+    name: "Sarah Chen",
+    issues: 42,
+    issuesSolved: 42,
+    points: 450,
+    photo: "/M1.png",
+    languages: ["JavaScript", "TypeScript", "Node.js"]
+  },
+  {
+    name: "Michael Rodriguez",
+    issues: 35,
+    issuesSolved: 35,
+    points: 380,
+    photo: "/M2.png",
+    languages: ["Python", "Django", "React"]
+  },
+  {
+    name: "Priya Patel",
+    issues: 28,
+    issuesSolved: 28,
+    points: 320,
+    photo: "/M3.png",
+    languages: ["Java", "Spring", "Kotlin"]
+  },
+  {
+    name: "James Kim",
+    issues: 25,
+    issuesSolved: 25,
+    points: 290,
+    languages: ["Go", "Rust", "Kubernetes"]
+  },
+  {
+    name: "Aisha Johnson",
+    issues: 24,
+    issuesSolved: 24,
+    points: 275,
+    languages: ["C#", ".NET", "SQL"]
+  },
+  {
+    name: "David Wilson",
+    issues: 23,
+    issuesSolved: 23,
+    points: 260,
+    languages: ["PHP", "Laravel", "Vue.js"]
+  },
+  {
+    name: "Emma Davis",
+    issues: 22,
+    issuesSolved: 22,
+    points: 240,
+    languages: ["Ruby", "Rails", "React"]
+  },
+  {
+    name: "Carlos Mendez",
+    issues: 20,
+    issuesSolved: 20,
+    points: 220,
+    languages: ["Python", "Flask", "Docker"]
+  },
+  {
+    name: "Olivia Thompson",
+    issues: 19,
+    issuesSolved: 19,
+    points: 210,
+    languages: ["Swift", "iOS", "Firebase"]
+  },
+  {
+    name: "Tyrone Williams",
+    issues: 18,
+    issuesSolved: 18,
+    points: 200,
+    languages: ["Dart", "Flutter", "Firebase"]
+  }
+];
 
 // Get top 3 for profile cards and all for the list
 
 
-const LeaderboardComp = ({leaderboard}) => {
-  const topProfiles = leaderboard.slice(0, 3);
-const listItems = leaderboard;
+const LeaderboardComp = () => {
+  const topProfiles = leaderboardData.slice(0, 3);
+const listItems = leaderboardData;
   return (
     <div className="min-h-screen bg-black text-white py-16 px-6 pt-35">
       {/* Header */}

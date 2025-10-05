@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 import { Badge } from './badge';
 import { motion } from 'framer-motion';
@@ -38,7 +39,7 @@ const ProfileHeader = ({ username, WalletComponent }) => {
       <motion.div 
         className="flex flex-col sm:flex-row justify-between items-center p-6 rounded-xl border" 
         style={{ backgroundColor: 'rgb(23, 23, 23)', borderColor: 'rgb(38, 38, 38)' }}
-        variants={containerVariants}
+        // variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
@@ -68,7 +69,7 @@ const ProfileHeader = ({ username, WalletComponent }) => {
             {/* Programming Language Badges */}
             <motion.div 
               className="flex flex-wrap gap-2 mt-3"
-              variants={containerVariants}
+              // variants={containerVariants}
             >
               <motion.div variants={itemVariants}>
                 <Badge 
